@@ -20,13 +20,14 @@ public class Comment {
     private Long id;
 
     @Column(nullable = false)
-    private String title;
-
-    @Column(nullable = false)
     private String content;
 
     @Column(nullable = false)
     @Builder.Default
-    private long views = 0L;
+    private long likes = 0L;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private long dislikes = 0L;
 
 }
