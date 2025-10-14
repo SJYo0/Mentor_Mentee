@@ -26,7 +26,7 @@ public class Post {
     private String content;
 
     @Column(nullable = false)
-    @Builder.Default
-    private long views = 0L;
+    @Builder.Default // builder에서 초기값을 지정해줄 수 있게해주는 어노테이션
+    private long views = 0L; // 초기값 설정해주기
 
 }
