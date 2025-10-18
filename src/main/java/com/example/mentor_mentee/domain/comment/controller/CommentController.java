@@ -1,14 +1,23 @@
 package com.example.mentor_mentee.domain.comment.controller;
 
+import com.example.mentor_mentee.domain.comment.dto.request.CommentRequestDto;
+import com.example.mentor_mentee.domain.comment.dto.response.CommentResponseDto;
+import com.example.mentor_mentee.domain.comment.entity.Comment;
+import com.example.mentor_mentee.domain.comment.repository.CommentRepository;
+import com.example.mentor_mentee.domain.comment.service.CommentService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/comments")
 public class CommentController {
+    private final CommentService commentService;
 
     @PostMapping("/")
-    public String CreateComment(String content){
-        return content + "댓글 작성 완료";
+    public CommentResponseDto createComment(@RequestBody CommentRequestDto commentRequestDto){
+        CommentResponseDto responseDto = commentService.createComment(commentRequestDto);
+        return responseDto;
     }
 
     @GetMapping

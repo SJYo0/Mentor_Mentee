@@ -19,15 +19,8 @@ public class Comment {
     @Column(name = "Id")
     private Long id;
 
+    // 댓글 본문
     @Column(nullable = false)
-    private String content;
-
-    @Column(nullable = false)
-    @Builder.Default
-    private long likes = 0L;
-
-    @Column(nullable = false)
-    @Builder.Default
-    private long dislikes = 0L;
+    private String body;
 
 }
