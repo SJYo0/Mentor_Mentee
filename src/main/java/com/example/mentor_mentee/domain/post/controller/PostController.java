@@ -1,9 +1,11 @@
 package com.example.mentor_mentee.domain.post.controller;
 
-import com.example.mentor_mentee.domain.post.dto.request.PostRequestDto;
+import com.example.mentor_mentee.domain.post.dto.request.CreateRequestDto;
+import com.example.mentor_mentee.domain.post.dto.request.UpdatePostRequestDto;
 import com.example.mentor_mentee.domain.post.dto.response.PostResponseDto;
 import com.example.mentor_mentee.domain.post.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor // 생성자 자동생성 | 생성자가 하나만 있다면 @autowired 자동진행
@@ -13,10 +15,12 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping("/")
-    public  PostResponseDto createPost(@RequestBody PostRequestDto postRequestDto){
-        PostResponseDto responseDto = postService.createPost(postRequestDto);
+    public  PostResponseDto createPost(@RequestBody CreateRequestDto createRequestDto){
+        PostResponseDto responseDto = postService.createPost(createRequestDto);
         return responseDto;
     }
+    // 사실 DB 등록 코드이기에 void도 가능하지만, 데이터 반환뿐만 아니라 성공신호등도 반환받아야함.
+    // 따라서 void 보다는 ResponseEntity<PostResponseDto> 같이 성공신호등의 정보 정도는 반환해주어야함.
 
     @GetMapping
     public  String getAllPosts(){
@@ -24,17 +28,20 @@ public class PostController {
     }
 
     @GetMapping("/{post-id}") // url에서는 get 요청밖에 못함
-    public String getPostById(@PathVariable(value = "post-id") Long id){
-        return id + "번 게시글 조회 완료";
+    public PostResponseDto getPostById(@PathVariable(value = "post-id") Long id){
+        PostResponseDto responseDto = postService.getPost(id);
+        return responseDto;
     }
 
     @PutMapping("/{post-id}")
-    public String updatePost(@PathVariable(value = "post-id") Long id) {
-        return id + "번 게시글 수정 완료";
+    public PostResponseDto updatePost(@RequestBody UpdatePostRequestDto updatePostRequestDto, @PathVariable(value = "post-id") Long id) {
+        PostResponseDto responseDto = postService.updatePost(updatePostRequestDto, id);
+        return responseDto;
     }
 
     @DeleteMapping("/{post-id}")
     public String deletePost(@PathVariable(value = "post-id") Long id){
-        return id + "번 게시글 삭제 완료";
+        String response = postService.deletePost(id);
+        return response;
     }
 }
