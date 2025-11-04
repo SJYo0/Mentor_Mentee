@@ -42,3 +42,6 @@ public class Post {
         this.content = content;
     }
 }
+
+// 내 브랜치에 업로드 git pull request
+// PR 이후 Merge 해줘야함
