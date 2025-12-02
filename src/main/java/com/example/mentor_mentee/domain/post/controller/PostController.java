@@ -7,6 +7,7 @@ import com.example.mentor_mentee.domain.post.dto.request.UpdatePostRequestDto;
 import com.example.mentor_mentee.domain.post.dto.response.PostListResponseDto;
 import com.example.mentor_mentee.domain.post.dto.response.PostResponseDto;
 import com.example.mentor_mentee.domain.post.service.PostService;
+import com.example.mentor_mentee.global.base.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,40 +21,40 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping("/")
-    public  PostResponseDto createPost(@RequestBody CreateRequestDto createRequestDto){
+    public  ResponseEntity<BaseResponse<PostResponseDto>> createPost(@RequestBody CreateRequestDto createRequestDto){
         PostResponseDto responseDto = postService.createPost(createRequestDto);
-        return responseDto;
+        return ResponseEntity.status(201).body(BaseResponse.success("201", "게시글이 성공적으로 생성되었습니다.", responseDto));
     }
     // 사실 DB 등록 코드이기에 void도 가능하지만, 데이터 반환뿐만 아니라 성공신호등도 반환받아야함.
     // 따라서 void 보다는 ResponseEntity<PostResponseDto> 같이 성공신호등의 정보 정도는 반환해주어야함.
 
     @PostMapping("/{user-id}")
-    public PostResponseDto createPost_user(@PathVariable(value = "user-id") Long userId, @RequestBody CreateRequestDto postRequestDto){
+    public ResponseEntity<BaseResponse<PostResponseDto>> createPost_user(@PathVariable(value = "user-id") Long userId, @RequestBody CreateRequestDto postRequestDto){
         PostResponseDto responseDto = postService.createPost_user(userId, postRequestDto);
-        return responseDto;
+        return ResponseEntity.status(201).body(BaseResponse.success("201", "게시글이 성공적으로 생성되었습니다.",responseDto));
     }
 
     @GetMapping
-    public List<PostListResponseDto> getAllPosts() {
+    public ResponseEntity<BaseResponse<List<PostListResponseDto>>> getAllPosts() {
         List<PostListResponseDto> responseDtos = postService.readPostList();
-        return responseDtos;
+        return ResponseEntity.status(200).body(BaseResponse.success(responseDtos));
     }
 
     @GetMapping("/{post-id}") // url에서는 get 요청밖에 못함
-    public PostResponseDto getPostById(@PathVariable(value = "post-id") Long id){
+    public ResponseEntity<PostResponseDto> getPostById(@PathVariable(value = "post-id") Long id){
         PostResponseDto responseDto = postService.readPost(id);
-        return responseDto;
+        return ResponseEntity.status(200).body(responseDto);
     }
 
     @PutMapping("/{post-id}")
-    public PostResponseDto updatePost(@RequestBody UpdatePostRequestDto updatePostRequestDto, @PathVariable(value = "post-id") Long id) {
+    public ResponseEntity<PostResponseDto> updatePost(@RequestBody UpdatePostRequestDto updatePostRequestDto, @PathVariable(value = "post-id") Long id) {
         PostResponseDto responseDto = postService.updatePost(updatePostRequestDto, id);
-        return responseDto;
+        return ResponseEntity.status(200).body(responseDto);
     }
 
     @DeleteMapping("/{post-id}")
-    public String deletePost(@PathVariable(value = "post-id") Long id){
+    public ResponseEntity<String> deletePost(@PathVariable(value = "post-id") Long id){
         String response = postService.deletePost(id);
-        return response;
+        return ResponseEntity.status(204).body(response);
     }
 }

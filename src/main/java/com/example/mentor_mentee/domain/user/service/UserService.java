@@ -8,11 +8,15 @@ import com.example.mentor_mentee.domain.user.dto.request.PatchRequestDto;
 import com.example.mentor_mentee.domain.user.dto.response.InfoResponseDto;
 import com.example.mentor_mentee.domain.user.dto.response.UserPostResponseDto;
 import com.example.mentor_mentee.domain.user.entity.User;
+import com.example.mentor_mentee.domain.user.exception.UserErrorCode;
 import com.example.mentor_mentee.domain.user.repository.UserRepository;
+import com.example.mentor_mentee.global.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +50,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public InfoResponseDto getInfo(Long userId){
         // 1. 사용자 정보 조회 (해당 사용자가 없으면 런타임 에러 실행)
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
 
         // 2. 가져온 사용자 정보를 dto로 변환
         InfoResponseDto dto = InfoResponseDto.builder()
@@ -64,10 +68,9 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserPostResponseDto readUserPost(Long userId){
-        // 1. postId를 통해서 Post 조회, 예외처리 필요
+
         User user = userRepository.findById(userId).orElse(null);
 
-        // 2. postResponseDto에 해당 Post 내용을 담아서 반환
         return UserPostResponseDto.builder()
                 .id(user.getId())
                 .posts(user.getPosts().
@@ -80,11 +83,12 @@ public class UserService {
                 .build();
     }
 
+
     // 사용자 정보 수정
     @Transactional
     public void patchInfo(Long userId, PatchRequestDto dto){
         // 1. 사용자 정보 가져오기 (해당 사용자 정보 없으면 예외 처리하기)
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(UserErrorCode.USER_NOT_FOUND));
 
         // 2. 사용자 정보 수정하기 (User 엔티티에 선언해놓은 patchInfo 함수 사용)
         user.patchInfo(dto);
@@ -101,7 +105,7 @@ public class UserService {
         if(userRepository.existsById(userId)){
             userRepository.deleteById(userId);
         } else {
-            throw new RuntimeException("User not found");
+            throw new CustomException(UserErrorCode.USER_NOT_FOUND);
         }
     }
 }
